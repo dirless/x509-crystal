@@ -1,0 +1,17 @@
+name: x509-crystal
+version: 0.1.0
+
+description: |
+  Crystal bindings to Go's crypto/x509 standard library via a shared library.
+  Generates self-signed and CA-signed X.509 certificates for mTLS and PKI use cases.
+  Supports ECDSA P-256 and RSA with user-specified key sizes.
+
+authors:
+  - Dirless <hello@dirless.io>
+
+license: MIT
+
+crystal: ">= 1.9.0"
+
+libraries:
+  libx509: "*"

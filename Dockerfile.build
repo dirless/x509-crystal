@@ -1,0 +1,29 @@
+FROM amazonlinux:2023
+
+ARG GO_VERSION=1.21.13
+
+# Install build deps
+RUN dnf install -y \
+    gcc \
+    tar \
+    gzip \
+    && dnf clean all
+
+# Install Go
+RUN curl -fsSL https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz \
+    | tar -C /usr/local -xz
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+WORKDIR /build
+
+# Copy Go module files first for layer caching
+COPY go/go.mod ./go/
+RUN cd go && go mod download
+
+# Copy source and build
+COPY go/ ./go/
+RUN cd go && \
+    CGO_ENABLED=1 go build \
+        -buildmode=c-shared \
+        -o ../libx509.so \
+        .

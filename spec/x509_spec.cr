@@ -10,10 +10,10 @@ end
 # Returns a CA bundle to use as "bring your own CA" test input.
 def external_ca(algorithm : X509::Algorithm = X509::Algorithm::ECDSA, rsa_bits : Int32 = 4096)
   X509.generate(
-    common_name:  "external-ca",
-    days:         3650,
+    common_name: "external-ca",
+    days: 3650,
     ca_algorithm: algorithm,
-    ca_rsa_bits:  rsa_bits,
+    ca_rsa_bits: rsa_bits,
   )
 end
 
@@ -124,12 +124,12 @@ describe X509 do
   describe ".generate — self-signed RSA" do
     it "generates a bundle with RSA 2048 for both CA and client" do
       b = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::RSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::RSA,
         client_algorithm: X509::Algorithm::RSA,
-        ca_rsa_bits:      2048,
-        client_rsa_bits:  2048,
+        ca_rsa_bits: 2048,
+        client_rsa_bits: 2048,
       )
       b.ca_cert.should_not be_empty
       b.ca_key.should_not be_empty
@@ -139,12 +139,12 @@ describe X509 do
 
     it "generates a bundle with RSA 4096 for both CA and client" do
       b = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::RSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::RSA,
         client_algorithm: X509::Algorithm::RSA,
-        ca_rsa_bits:      4096,
-        client_rsa_bits:  4096,
+        ca_rsa_bits: 4096,
+        client_rsa_bits: 4096,
       )
       b.ca_cert.should_not be_empty
       b.client_cert.should_not be_empty
@@ -152,30 +152,30 @@ describe X509 do
 
     it "generates a bundle with RSA 3072 CA" do
       b = X509.generate(
-        common_name:  "test",
-        days:         365,
+        common_name: "test",
+        days: 365,
         ca_algorithm: X509::Algorithm::RSA,
-        ca_rsa_bits:  3072,
+        ca_rsa_bits: 3072,
       )
       b.ca_key.should_not be_empty
     end
 
     it "RSA bundle produces different certs on successive calls" do
       b1 = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::RSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::RSA,
         client_algorithm: X509::Algorithm::RSA,
-        ca_rsa_bits:      2048,
-        client_rsa_bits:  2048,
+        ca_rsa_bits: 2048,
+        client_rsa_bits: 2048,
       )
       b2 = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::RSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::RSA,
         client_algorithm: X509::Algorithm::RSA,
-        ca_rsa_bits:      2048,
-        client_rsa_bits:  2048,
+        ca_rsa_bits: 2048,
+        client_rsa_bits: 2048,
       )
       b1.ca_cert.should_not eq(b2.ca_cert)
     end
@@ -186,11 +186,11 @@ describe X509 do
   describe ".generate — mixed algorithms" do
     it "ECDSA CA + RSA client generates without error" do
       b = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::ECDSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::ECDSA,
         client_algorithm: X509::Algorithm::RSA,
-        client_rsa_bits:  2048,
+        client_rsa_bits: 2048,
       )
       b.ca_cert.should_not be_empty
       b.client_cert.should_not be_empty
@@ -198,11 +198,11 @@ describe X509 do
 
     it "RSA CA + ECDSA client generates without error" do
       b = X509.generate(
-        common_name:      "test",
-        days:             365,
-        ca_algorithm:     X509::Algorithm::RSA,
+        common_name: "test",
+        days: 365,
+        ca_algorithm: X509::Algorithm::RSA,
         client_algorithm: X509::Algorithm::ECDSA,
-        ca_rsa_bits:      2048,
+        ca_rsa_bits: 2048,
       )
       b.ca_cert.should_not be_empty
       b.client_cert.should_not be_empty
@@ -211,8 +211,8 @@ describe X509 do
     it "client_algorithm defaults to ca_algorithm when not set" do
       # Both ECDSA — should be identical behaviour to not setting client_algorithm.
       b = X509.generate(
-        common_name:  "test",
-        days:         365,
+        common_name: "test",
+        days: 365,
         ca_algorithm: X509::Algorithm::ECDSA,
       )
       b.ca_cert.should_not be_empty
@@ -225,11 +225,11 @@ describe X509 do
   describe ".generate — CA-signed mode" do
     it "returns all four fields when using an external ECDSA CA" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "my-tenant",
-        days:        365,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       b.ca_cert.should_not be_empty
       b.ca_key.should_not be_empty
@@ -239,57 +239,57 @@ describe X509 do
 
     it "bundle ca_cert equals the provided CA cert" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "my-tenant",
-        days:        365,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       b.ca_cert.should eq(ca.ca_cert)
     end
 
     it "bundle ca_key equals the provided CA key" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "my-tenant",
-        days:        365,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       b.ca_key.should eq(ca.ca_key)
     end
 
     it "client_cert has CERTIFICATE PEM header in CA-signed mode" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "my-tenant",
-        days:        365,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       pem_type?(b.client_cert, "CERTIFICATE").should be_true
     end
 
     it "client_key has PRIVATE KEY PEM header in CA-signed mode" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "my-tenant",
-        days:        365,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       pem_type?(b.client_key, "PRIVATE KEY").should be_true
     end
 
     it "generates RSA client cert under ECDSA CA" do
       ca = external_ca(X509::Algorithm::ECDSA)
-      b  = X509.generate(
-        common_name:      "my-tenant",
-        days:             365,
-        ca_cert:          ca.ca_cert,
-        ca_key:           ca.ca_key,
+      b = X509.generate(
+        common_name: "my-tenant",
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
         client_algorithm: X509::Algorithm::RSA,
-        client_rsa_bits:  2048,
+        client_rsa_bits: 2048,
       )
       b.client_cert.should_not be_empty
       b.client_key.should_not be_empty
@@ -297,11 +297,11 @@ describe X509 do
 
     it "generates ECDSA client cert under RSA CA" do
       ca = external_ca(X509::Algorithm::RSA, 2048)
-      b  = X509.generate(
-        common_name:      "my-tenant",
-        days:             365,
-        ca_cert:          ca.ca_cert,
-        ca_key:           ca.ca_key,
+      b = X509.generate(
+        common_name: "my-tenant",
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
         client_algorithm: X509::Algorithm::ECDSA,
       )
       b.client_cert.should_not be_empty
@@ -310,13 +310,13 @@ describe X509 do
 
     it "generates RSA client cert under RSA CA" do
       ca = external_ca(X509::Algorithm::RSA, 2048)
-      b  = X509.generate(
-        common_name:      "my-tenant",
-        days:             365,
-        ca_cert:          ca.ca_cert,
-        ca_key:           ca.ca_key,
+      b = X509.generate(
+        common_name: "my-tenant",
+        days: 365,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
         client_algorithm: X509::Algorithm::RSA,
-        client_rsa_bits:  2048,
+        client_rsa_bits: 2048,
       )
       b.client_cert.should_not be_empty
       b.client_key.should_not be_empty
@@ -338,11 +338,11 @@ describe X509 do
 
     it "accepts 90-day validity for CA-signed client cert" do
       ca = external_ca
-      b  = X509.generate(
+      b = X509.generate(
         common_name: "t",
-        days:        90,
-        ca_cert:     ca.ca_cert,
-        ca_key:      ca.ca_key,
+        days: 90,
+        ca_cert: ca.ca_cert,
+        ca_key: ca.ca_key,
       )
       b.client_cert.should_not be_empty
     end
@@ -372,10 +372,10 @@ describe X509 do
     it "raises X509::Error for RSA CA bits below 2048" do
       expect_raises(X509::Error) do
         X509.generate(
-          common_name:  "test",
-          days:         365,
+          common_name: "test",
+          days: 365,
           ca_algorithm: X509::Algorithm::RSA,
-          ca_rsa_bits:  1024,
+          ca_rsa_bits: 1024,
         )
       end
     end
@@ -383,10 +383,10 @@ describe X509 do
     it "raises X509::Error for RSA client bits below 2048" do
       expect_raises(X509::Error) do
         X509.generate(
-          common_name:      "test",
-          days:             365,
+          common_name: "test",
+          days: 365,
           client_algorithm: X509::Algorithm::RSA,
-          client_rsa_bits:  512,
+          client_rsa_bits: 512,
         )
       end
     end
@@ -396,9 +396,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     ca.ca_cert,
-          ca_key:      nil,
+          days: 365,
+          ca_cert: ca.ca_cert,
+          ca_key: nil,
         )
       end
     end
@@ -408,9 +408,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     nil,
-          ca_key:      ca.ca_key,
+          days: 365,
+          ca_cert: nil,
+          ca_key: ca.ca_key,
         )
       end
     end
@@ -419,9 +419,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     "not-valid-pem",
-          ca_key:      "not-valid-pem",
+          days: 365,
+          ca_cert: "not-valid-pem",
+          ca_key: "not-valid-pem",
         )
       end
     end
@@ -431,9 +431,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     b.client_cert, # not a CA cert
-          ca_key:      b.client_key,
+          days: 365,
+          ca_cert: b.client_cert, # not a CA cert
+          ca_key: b.client_key,
         )
       end
     end
@@ -444,9 +444,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     ca1.ca_cert,
-          ca_key:      ca2.ca_key, # from a different CA
+          days: 365,
+          ca_cert: ca1.ca_cert,
+          ca_key: ca2.ca_key, # from a different CA
         )
       end
     end
@@ -456,9 +456,9 @@ describe X509 do
       expect_raises(X509::Error) do
         X509.generate(
           common_name: "test",
-          days:        365,
-          ca_cert:     ca.ca_cert,
-          ca_key:      "-----BEGIN PRIVATE KEY-----\nYWJjZGVmZ2hp\n-----END PRIVATE KEY-----",
+          days: 365,
+          ca_cert: ca.ca_cert,
+          ca_key: "-----BEGIN PRIVATE KEY-----\nYWJjZGVmZ2hp\n-----END PRIVATE KEY-----",
         )
       end
     end
@@ -544,9 +544,9 @@ describe X509 do
       10.times do
         b = X509.generate(
           common_name: "tenant",
-          days:        365,
-          ca_cert:     ca.ca_cert,
-          ca_key:      ca.ca_key,
+          days: 365,
+          ca_cert: ca.ca_cert,
+          ca_key: ca.ca_key,
         )
         b.client_cert.should_not be_empty
       end

@@ -30,9 +30,9 @@ module X509
   # ```
   # bundle = X509.generate(
   #   common_name: "tenant-abc123",
-  #   days:        3650,
-  #   ca_cert:     File.read("my-ca.crt"),
-  #   ca_key:      File.read("my-ca.key"),
+  #   days: 3650,
+  #   ca_cert: File.read("my-ca.crt"),
+  #   ca_key: File.read("my-ca.key"),
   # )
   # ```
   #
@@ -42,11 +42,11 @@ module X509
   #
   # ```
   # bundle = X509.generate(
-  #   common_name:      "tenant-abc123",
-  #   days:             3650,
-  #   ca_algorithm:     X509::Algorithm::ECDSA,
+  #   common_name: "tenant-abc123",
+  #   days: 3650,
+  #   ca_algorithm: X509::Algorithm::ECDSA,
   #   client_algorithm: X509::Algorithm::RSA,
-  #   client_rsa_bits:  2048,
+  #   client_rsa_bits: 2048,
   # )
   # ```
   #
@@ -112,10 +112,10 @@ module X509
       end
 
       CertBundle.new(
-        ca_cert:     String.new(result.value.ca_cert.not_nil!),
-        ca_key:      String.new(result.value.ca_key.not_nil!),
+        ca_cert: String.new(result.value.ca_cert.not_nil!),
+        ca_key: String.new(result.value.ca_key.not_nil!),
         client_cert: String.new(result.value.client_cert.not_nil!),
-        client_key:  String.new(result.value.client_key.not_nil!),
+        client_key: String.new(result.value.client_key.not_nil!),
       )
     ensure
       LibX509.x509_free(result)

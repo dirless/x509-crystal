@@ -3,12 +3,12 @@ lib LibX509
   # Result struct returned by x509_generate.
   # All char* fields are heap-allocated by Go and must be freed by x509_free.
   struct Result
-    ca_cert     : UInt8*
-    ca_key      : UInt8*
+    ca_cert : UInt8*
+    ca_key : UInt8*
     client_cert : UInt8*
-    client_key  : UInt8*
-    error       : UInt8*
-    status      : Int32   # 0 = success, 1 = error
+    client_key : UInt8*
+    error : UInt8*
+    status : Int32 # 0 = success, 1 = error
   end
 
   # Generate a CA certificate and a client certificate.

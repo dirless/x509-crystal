@@ -1,4 +1,8 @@
-@[Link("x509", ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -Wl,-rpath,#{__DIR__}/../../ -Wl,-rpath,#{__DIR__}/../../dist -lx509")]
+{% if flag?(:x509_static) %}
+  @[Link(ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -Wl,-Bstatic -lx509 -Wl,-Bdynamic")]
+{% else %}
+  @[Link("x509", ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -Wl,-rpath,#{__DIR__}/../../ -Wl,-rpath,#{__DIR__}/../../dist -lx509")]
+{% end %}
 lib LibX509
   # Result struct returned by x509_generate.
   # All char* fields are heap-allocated by Go and must be freed by x509_free.

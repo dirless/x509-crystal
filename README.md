@@ -18,7 +18,7 @@ and a clean idiomatic Crystal API on the consumer side.
 ## Requirements
 
 - Crystal >= 1.9.0
-- `libx509.so` — prebuilt and shipped with releases (see below)
+- `libx509.so` (dynamic) or `libx509.a` (static) — prebuilt and shipped with releases (see below)
 
 ## Installation
 
@@ -30,10 +30,23 @@ dependencies:
     github: dirless/x509-crystal
 ```
 
-Copy `libx509.so` to a location on your library path (e.g. `/usr/lib/`) or
-alongside your binary.
+### Dynamic linking (default)
 
-### Building `libx509.so` from source
+Copy `libx509.so` to a location on your library path (e.g. `/usr/lib/`) or alongside your binary.
+
+### Static linking
+
+Download `libx509-static-linux-amd64.tar.gz` from the [latest release](https://github.com/dirless/x509-crystal/releases/latest),
+extract it, and pass the archive to the Crystal compiler:
+
+```sh
+tar -xzf libx509-static-linux-amd64.tar.gz  # → libx509.a, libx509.h
+crystal build src/your_app.cr --link-flags "/path/to/libx509.a"
+```
+
+This produces a fully self-contained binary with no runtime `.so` dependency.
+
+### Building from source
 
 For local development (requires Go >= 1.21 on PATH):
 
@@ -42,14 +55,19 @@ make build
 # → libx509.so
 ```
 
-For a production-compatible build matching the RPM target (requires Docker):
+For a dynamic build compatible with Amazon Linux 2023 (requires Docker):
 
 ```sh
 make docker-build
-# → dist/libx509.so (built inside Amazon Linux 2023)
+# → dist/libx509.so
 ```
 
-Use `dist/libx509.so` for anything going into an RPM.
+For a static build (Alpine/musl, requires Docker):
+
+```sh
+make docker-build-static
+# → dist/libx509.a + dist/libx509.h
+```
 
 ## Usage
 

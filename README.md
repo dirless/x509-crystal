@@ -1,7 +1,6 @@
 # x509-crystal
 
-Pure Crystal X.509 certificate generation using OpenSSL (already a Crystal stdlib
-dependency — no extra native libraries required).
+Pure Crystal X.509 certificate generation.
 
 Generates self-signed and CA-signed X.509 certificates for mTLS and PKI use cases,
 with support for ECDSA P-256 and RSA at user-specified key sizes.
@@ -15,7 +14,6 @@ the certificate *generation* surface. This shard adds the missing pieces via dir
 ## Requirements
 
 - Crystal >= 1.20.0
-- OpenSSL (already linked by Crystal — no extra setup)
 
 ## Installation
 
@@ -27,7 +25,7 @@ dependencies:
     github: dirless/x509-crystal
 ```
 
-Run `shards install`. That's it — no native library to build or copy.
+Run `shards install`.
 
 ## Usage
 

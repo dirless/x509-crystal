@@ -1,0 +1,4 @@
+# Crystal
+lib/
+.shards/
+bin/

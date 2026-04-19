@@ -5,11 +5,12 @@ LIB_NAME   := libx509.so
 HEADER_OUT := libx509.h
 GO_DIR     := go
 
-DOCKER       := docker
-DOCKER_IMAGE := x509-crystal-builder
-GO_VERSION   := 1.21.13
+DOCKER               := docker
+DOCKER_IMAGE         := x509-crystal-builder
+DOCKER_IMAGE_STATIC  := x509-crystal-builder-static
+GO_VERSION           := 1.21.13
 
-.PHONY: all build docker-build clean test
+.PHONY: all build docker-build docker-build-static clean test
 
 all: build
 
@@ -38,6 +39,22 @@ docker-build:
 		$(DOCKER_IMAGE) \
 		cp /build/$(LIB_NAME) /output/$(LIB_NAME)
 	@echo "==> Done: dist/$(LIB_NAME)"
+
+# Alpine/musl build — produces a static archive for use in fully static binaries
+# Output lands in dist/ alongside the generated header.
+docker-build-static:
+	@echo "==> Building libx509.a (static) inside Alpine..."
+	@mkdir -p dist
+	$(DOCKER) build \
+		--build-arg GO_VERSION=$(GO_VERSION) \
+		-t $(DOCKER_IMAGE_STATIC) \
+		-f Dockerfile.build.static \
+		.
+	$(DOCKER) run --rm \
+		-v "$(CURDIR)/dist":/output \
+		$(DOCKER_IMAGE_STATIC) \
+		sh -c "cp /build/libx509.a /build/libx509.h /output/"
+	@echo "==> Done: dist/libx509.a dist/libx509.h"
 
 # Run Go unit tests (pure Go, no shared library required)
 test-go:

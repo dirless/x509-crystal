@@ -1,0 +1,28 @@
+FROM alpine:3.19
+
+ARG GO_VERSION=1.21.13
+
+RUN apk add --no-cache \
+    gcc \
+    musl-dev \
+    curl \
+    tar \
+    binutils
+
+RUN curl -fsSL https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz \
+    | tar -C /usr/local -xz
+ENV PATH="/usr/local/go/bin:${PATH}"
+
+WORKDIR /build
+
+COPY go/go.mod ./go/
+RUN cd go && go mod download
+
+COPY go/ ./go/
+RUN cd go && \
+    CGO_ENABLED=1 go build \
+        -buildmode=c-archive \
+        -ldflags "-s -w" \
+        -o ../libx509.a \
+        . && \
+    strip -S ../libx509.a

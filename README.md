@@ -122,6 +122,42 @@ All errors raise `X509::Error` with a descriptive message. Common causes:
 - Mismatched `ca_cert` and `ca_key`
 - Only one of `ca_cert` / `ca_key` provided (both or neither)
 
+## Inspecting generated certificates
+
+```crystal
+require "x509-crystal"
+
+bundle = X509.generate(common_name: "tenant-abc123", days: 3650)
+
+File.write("ca.crt",     bundle.ca_cert)
+File.write("client.crt", bundle.client_cert)
+File.write("client.key", bundle.client_key)
+```
+
+Inspect with OpenSSL:
+
+```sh
+# CA certificate — should show CA:TRUE
+$ openssl x509 -in ca.crt -noout -text | grep -E "Subject:|Issuer:|CA:|Key Usage:|Not (Before|After)"
+        Subject: CN=tenant-abc123, O=x509-crystal
+        Issuer: CN=tenant-abc123, O=x509-crystal
+        Not Before: Apr 19 00:00:00 2026 GMT
+        Not After : Apr 16 00:00:00 2036 GMT
+            CA:TRUE, pathlen:1
+            X509v3 Key Usage: critical
+
+# Client certificate — should show CA:FALSE and clientAuth EKU
+$ openssl x509 -in client.crt -noout -text | grep -E "Subject:|Issuer:|CA:|Key Usage:|Extended|Not (Before|After)"
+        Subject: CN=tenant-abc123, O=x509-crystal
+        Issuer: CN=tenant-abc123, O=x509-crystal
+        Not Before: Apr 19 00:00:00 2026 GMT
+        Not After : Apr 16 00:00:00 2036 GMT
+            CA:FALSE
+            X509v3 Key Usage: critical
+            X509v3 Extended Key Usage:
+                TLS Web Client Authentication
+```
+
 ## Testing
 
 ```sh

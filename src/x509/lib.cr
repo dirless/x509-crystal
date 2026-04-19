@@ -1,5 +1,5 @@
 {% if flag?(:x509_static) %}
-  @[Link(ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -Wl,-Bstatic -lx509 -Wl,-Bdynamic")]
+  @[Link(ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -lx509")]
 {% else %}
   @[Link("x509", ldflags: "-L#{__DIR__}/../../ -L#{__DIR__}/../../dist -Wl,-rpath,#{__DIR__}/../../ -Wl,-rpath,#{__DIR__}/../../dist -lx509")]
 {% end %}

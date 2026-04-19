@@ -1,24 +1,21 @@
 # x509-crystal
 
-Crystal bindings to Go's `crypto/x509` standard library via a shared library.
+Pure Crystal X.509 certificate generation using OpenSSL (already a Crystal stdlib
+dependency — no extra native libraries required).
 
 Generates self-signed and CA-signed X.509 certificates for mTLS and PKI use cases,
 with support for ECDSA P-256 and RSA at user-specified key sizes.
 
 ## Why
 
-Go's `crypto/x509` package is a mature, well-audited implementation of the X.509
-standard maintained by the Go team. Rather than reimplement certificate generation
-in Crystal, we wrap it via CGo FFI — the same pattern used by
-[age-crystal](https://github.com/dirless/age-crystal).
-
-The result is zero external dependencies on the Go side (pure standard library),
-and a clean idiomatic Crystal API on the consumer side.
+Crystal's standard library ships with OpenSSL bindings for TLS, but doesn't expose
+the certificate *generation* surface. This shard adds the missing pieces via direct
+`LibCrypto` bindings — no Go toolchain, no CGo, no shared library to manage.
 
 ## Requirements
 
-- Crystal >= 1.9.0
-- `libx509.so` (dynamic) or `libx509.a` (static) — prebuilt and shipped with releases (see below)
+- Crystal >= 1.20.0
+- OpenSSL (already linked by Crystal — no extra setup)
 
 ## Installation
 
@@ -30,44 +27,7 @@ dependencies:
     github: dirless/x509-crystal
 ```
 
-### Dynamic linking (default)
-
-Copy `libx509.so` to a location on your library path (e.g. `/usr/lib/`) or alongside your binary.
-
-### Static linking
-
-Download `libx509-static-linux-amd64.tar.gz` from the [latest release](https://github.com/dirless/x509-crystal/releases/latest),
-extract it, and pass the archive to the Crystal compiler:
-
-```sh
-tar -xzf libx509-static-linux-amd64.tar.gz  # → libx509.a, libx509.h
-crystal build src/your_app.cr --link-flags "/path/to/libx509.a"
-```
-
-This produces a fully self-contained binary with no runtime `.so` dependency.
-
-### Building from source
-
-For local development (requires Go >= 1.21 on PATH):
-
-```sh
-make build
-# → libx509.so
-```
-
-For a dynamic build compatible with Amazon Linux 2023 (requires Docker):
-
-```sh
-make docker-build
-# → dist/libx509.so
-```
-
-For a static build (Alpine/musl, requires Docker):
-
-```sh
-make docker-build-static
-# → dist/libx509.a + dist/libx509.h
-```
+Run `shards install`. That's it — no native library to build or copy.
 
 ## Usage
 
@@ -78,9 +38,9 @@ require "x509-crystal"
 bundle = X509.generate(common_name: "tenant-abc123", days: 3650)
 
 bundle.ca_cert     # String (PEM) — self-signed CA certificate
-bundle.ca_key      # String (PEM) — CA private key
+bundle.ca_key      # String (PEM) — CA private key (PKCS8)
 bundle.client_cert # String (PEM) — client cert signed by the CA
-bundle.client_key  # String (PEM) — client private key
+bundle.client_key  # String (PEM) — client private key (PKCS8)
 
 # CA-signed (production — bring your own CA)
 bundle = X509.generate(
@@ -153,7 +113,7 @@ bundle.client_cert : String  # PEM-encoded client certificate
 bundle.client_key  : String  # PEM-encoded client private key (PKCS8)
 ```
 
-## Error Handling
+## Error handling
 
 All errors raise `X509::Error` with a descriptive message. Common causes:
 
@@ -167,14 +127,7 @@ All errors raise `X509::Error` with a descriptive message. Common causes:
 ## Testing
 
 ```sh
-# Go unit tests (no shared library needed)
-make test-go
-
-# Crystal specs (builds libx509.so first)
-make test-crystal
-
-# Both
-make test
+crystal spec
 ```
 
 ## License

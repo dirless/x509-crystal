@@ -52,6 +52,12 @@ lib LibX509Crypto
   fun BN_to_ASN1_INTEGER(bn : Void*, ai : Void*) : Void*
   fun ASN1_INTEGER_free(ai : Void*)
   fun X509_set_serialNumber(cert : LibCrypto::X509, serial : Void*) : Int32
+  # X509_NAME_add_entry_by_NID with V_ASN1_UTF8STRING (12) instead of
+  # MBSTRING_UTF8 bypasses the RFC 5280 ub-common-name 64-char limit that
+  # OpenSSL 3.x enforces when using the MBSTRING auto-selection path.
+  fun X509_NAME_add_entry_by_NID(name : LibCrypto::X509_NAME, nid : Int32,
+                                  type : Int32, bytes : UInt8*, len : Int32,
+                                  loc : Int32, set : Int32) : Int32
 
   # ── Key-matches-cert check ────────────────────────────────────────────────
   {% if compare_versions(LibCrypto::OPENSSL_VERSION, "3.0.0") >= 0 %}

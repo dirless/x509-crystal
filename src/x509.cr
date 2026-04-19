@@ -227,7 +227,10 @@ module X509
 
   private def self.make_name(cn : String) : OpenSSL::X509::Name
     name = OpenSSL::X509::Name.new
-    name.add_entry("CN", cn)
+    # Use V_ASN1_UTF8STRING (12) with NID_commonName (13) directly so that
+    # OpenSSL 3.x does not apply the RFC 5280 ub-common-name 64-char limit
+    # that the MBSTRING_UTF8 auto-selection path enforces.
+    LibX509Crypto.X509_NAME_add_entry_by_NID(name.to_unsafe, 13, 12, cn.to_unsafe, cn.bytesize, -1, 0)
     name.add_entry("O", "x509-crystal")
     name
   end

@@ -7,9 +7,9 @@ description: |
   Supports ECDSA P-256 and RSA with user-specified key sizes. No Go toolchain required.
 
 authors:
-  - Dirless <hello@dirless.io>
+  - Dirless <info@dirless.com>
 
-license: MIT
+license: Apache-2.0
 
 crystal: ">= 1.20.0"
 
